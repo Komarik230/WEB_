@@ -22,26 +22,6 @@ def index():
     # session = db_session.create_session()
     return render_template("main.html", title='Главная страница') #form=form)
 
-@app.route("/stories")
-def stories():
-    pass
-
-@app.route("/mems")
-def mems():
-    pass
-
-@app.route("/motivation")
-def motivation():
-    pass
-
-@app.route("/holiday")
-def holiday():
-    pass
-
-@app.route("/account")
-def account():
-    pass
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
