@@ -12,7 +12,7 @@
 <body>
 <header>
     <nav class="navbar navbar-light bg-secondary">
-        <h1>Проект Яндекс</h1>
+        <h1>Проект NoName</h1>
         {% if current_user.is_authenticated %}
     <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
         {% else %}
@@ -27,6 +27,21 @@
 <!-- Begin page content -->
 <main role="main" class="container">
     {% block content %}{% endblock %}
+    <!-- подвал -->
+       <div class="container">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <div class="col-md-4 d-flex align-items-center">
+      <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+        <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+      </a>
+      <span class="mb-3 mb-md-0 text-body-secondary">contact us: +7 977 452 36 85</span>
+    </div>
+
+    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">tg bot</a></li>
+    </ul>
+  </footer>
+    </div>
 </main>
 </body>
 </html>

@@ -1,10 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>КОСМИЧЕСКИЙ ПРОЕКТ</title>
-</head>
-<body>
-    <h1>Салам пополам</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+ {% block content %}
+<div class="px-4 pt-5 my-5 text-center border-bottom">
+    <h1 class="display-4 fw-bold text-body-emphasis">NoName</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">сайт для вдохновения, мотивации и развлечения</p>
+</div>
+
+<div class="d-flex flex-column flex-md-row p-4 gap-4 py-md-5 align-items-center justify-content-center">
+  <ul class="dropdown-menu d-block position-static mx-0 shadow w-220px" data-bs-theme="light">
+    <li>
+      <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+        <svg class="bi" width="16" height="16"><use xlink:href="#files"></use></svg>
+        Планируй свои дела и правильно распоряжайся временем
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+        <svg class="bi" width="16" height="16"><use xlink:href="#image-fill"></use></svg>
+        Создавай свои собственные посты
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+        <svg class="bi" width="16" height="16"><use xlink:href="#film"></use></svg>
+        Делись своим творчеством с другими
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+        <svg class="bi" width="16" height="16"><use xlink:href="#music-note-beamed"></use></svg>
+        Получай мотивацию и развивайся
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+        <svg class="bi" width="16" height="16"><use xlink:href="#joystick"></use></svg>
+        Сохраняй любимые публикации в избранное
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+        <svg class="bi" width="16" height="16"><use xlink:href="#music-note-beamed"></use></svg>
+        Узнай какой сегодня праздник
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item d-flex gap-2 align-items-center" href="#">
+        <svg class="bi" width="16" height="16"><use xlink:href="#music-note-beamed"></use></svg>
+        Сохраняй смешные мемы на устройство
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="img/planer.png" alt="планер">
+        </div>
+        <div class="col-md-4">
+            <img src="img/stories.png" alt="истории">
+        </div>
+        <div class="col-md-4">
+            <img src="img/mems.png" alt="мемы">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <img src="/img/motivation.png" alt="мотивация">
+        </div>
+        <div class="col-md-4">
+            <img src="img/holiday.png" alt="праздник дня">
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -19,8 +19,8 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    session = db_session.create_session()
-    return render_template("main.html", form=form)
+    # session = db_session.create_session()
+    return render_template("main.html", title='Главная страница') #form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
