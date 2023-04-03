@@ -1,0 +1,15 @@
+{
+    "carImageURL":              "images/car-rent/car-rent-006.png",
+    "carName":                  "Fiat 500",
+    "carCompany":               "Fiat 500, Renault Twingo",
+    "carPriceCurrency":         "$",
+    "carPriceAmount":           "15.00",
+    "carPriceDuration":         "DAY",
+    "carDescription":           "Equipment, seats and luggage",
+    "carAirConditioning":       "available",
+    "carDoors":                 "3",
+    "carPassengers":            "4",
+    "carSuitcase":              "1",
+    "carBag":                   "1",
+    "carTransmission":          "Manual"
+}

@@ -1,0 +1,44 @@
+{"locations":[
+
+    {
+        "markerLocation":   [55.7539303, 37.6186063],
+        "markerImage":      "images/markers/marker-1.png",
+        "URL":              "#",
+        "image":            "images/portfolio/realestate/thumbs/realestate-thumbs-001.jpg",
+        "status":           "For Sale",
+        "title":            "House",
+        "address":          "184 Rue Saint-Martin",
+        "price":            "$2,450"
+    },
+    {
+        "markerLocation":   [55.7539303, 37.6186063],
+        "markerImage":      "images/markers/marker-2.png",
+        "URL":              "#",
+        "image":            "images/portfolio/realestate/thumbs/realestate-thumbs-002.jpg",
+        "status":           "For Sale",
+        "title":            "Villa",
+        "address":          "75 Rue de Rivoli",
+        "price":            "$14,450"
+    },
+    {
+        "markerLocation":   [55.7539303,37.6186063],
+        "markerImage":      "images/markers/marker-3.png",
+        "URL":              "#",
+        "image":            "images/portfolio/realestate/thumbs/realestate-thumbs-003.jpg",
+        "status":           "For Rent",
+        "title":            "Office",
+        "address":          "12 Rue Étienne Marcel",
+        "price":            "$350"
+    },
+    {
+        "markerLocation":   [55.7539303,37.6186063],
+        "markerImage":      "images/markers/marker-4.png",
+        "URL":              "#",
+        "image":            "images/portfolio/realestate/thumbs/realestate-thumbs-004.jpg",
+        "status":           "For Rent",
+        "title":            "Apartment",
+        "address":          "58 Rue des Francs Bourgeois",
+        "price":            "$450"
+    }
+
+]}
