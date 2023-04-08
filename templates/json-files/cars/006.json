@@ -1,0 +1,15 @@
+{
+    "carImageURL":              "images/car-rent/car-rent-011.png",
+    "carName":                  "BMW Série 1",
+    "carCompany":               "BMW Série 1, VW Golf VII",
+    "carPriceCurrency":         "$",
+    "carPriceAmount":           "20.00",
+    "carPriceDuration":         "DAY",
+    "carDescription":           "Equipment, seats and luggage",
+    "carAirConditioning":       "available",
+    "carDoors":                 "5",
+    "carPassengers":            "5",
+    "carSuitcase":              "2",
+    "carBag":                   "1",
+    "carTransmission":          "Manual"
+}

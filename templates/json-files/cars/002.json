@@ -1,0 +1,15 @@
+{
+    "carImageURL":              "images/car-rent/car-rent-007.png",
+    "carName":                  "VW Polo",
+    "carCompany":               "VW Polo, Opel Corsa",
+    "carPriceCurrency":         "$",
+    "carPriceAmount":           "15.65",
+    "carPriceDuration":         "DAY",
+    "carDescription":           "Equipment, seats and luggage",
+    "carAirConditioning":       "available",
+    "carDoors":                 "5",
+    "carPassengers":            "5",
+    "carSuitcase":              "1",
+    "carBag":                   "2",
+    "carTransmission":          "Manual"
+}
