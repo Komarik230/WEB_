@@ -8,7 +8,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
 )
 
-CHOOSING, TYPING_REPLY, TYPING_CHOICE = range(3)
+TURNED_OFF, STARTED, IN_MENU = range(3)
 
 logger = logging.getLogger(__name__)
 load_dotenv()
@@ -18,43 +18,55 @@ token = os.getenv('token')
 class User:
     def __init__(self):
         self.is_guest = True
-        self.prev_keyboard = []
-        self.reply_keyboard = []
+        self.keyboard_pos = 0
+        self.keyboards = [
+            [['Start']],
+            [['Menu', 'Turn Off']],
+            ([['Registration', 'Log in'], ["Chat GPT's stories", 'Return']],
+             [['My profile', 'Log out'], ["Chat GPT's stories", 'Return']])
+        ]
 
     async def start(self, update, context):
-        self.reply_keyboard = [
-            ['Menu', 'Turn Off']
-        ]
-        self.prev_keyboard = self.reply_keyboard
-        markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
+        print(1)
+        self.keyboard_pos += 1
+        self.reply_keyboard = self.keyboards[self.keyboard_pos]
+        markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=False)
         await update.message.reply_text(
             text='Hello',
             reply_markup=markup
         )
-        return CHOOSING
+        return STARTED
 
     async def menu(self, update, context):
+        self.keyboard_pos += 1
         if self.is_guest:
-            self.reply_keyboard = [['Registration', 'Log in'], ["Chat GPT's stories", 'Return']]
+            self.reply_keyboard = self.keyboards[self.keyboard_pos][0]
         else:
-            self.reply_keyboard = [['My profile', 'Log out'], ["Chat GPT's stories", 'Return']]
+            self.reply_keyboard = self.keyboards[self.keyboard_pos][1]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
         await update.message.reply_text(
             text='that you may do',
             reply_markup=markup
         )
-        self.prev_keyboard = self.reply_keyboard
-        return CHOOSING
+        return IN_MENU
 
     async def stop(self, update, context):
-        await update.message.reply_text("Всего доброго!")
-        return ConversationHandler.END
+        self.keyboard_pos = 0
+        self.reply_keyboard = self.keyboards[self.keyboard_pos]
+        markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            text="Всего доброго!",
+            reply_markup=markup
+        )
+        return TURNED_OFF
 
     async def back(self, update, context):
-        markup = ReplyKeyboardMarkup(self.prev_keyboard, one_time_keyboard=False)
+        self.keyboard_pos -= 1
+        self.reply_keyboard = self.keyboards[self.keyboard_pos]
+        markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
         await update.message.reply_text(text='adadad',
                                         reply_markup=markup)
-        return CHOOSING
+        return self.keyboard_pos
 
     def main(self):
         application = Application.builder().token(token).build()
@@ -63,25 +75,29 @@ class User:
             entry_points=[CommandHandler('start', self.start)],
             # словарь состояний разговора, возвращаемых callback функциями
             states={
-                CHOOSING: [
+                STARTED: [
                     MessageHandler(
                         filters.Regex("Menu"), self.menu
                     ),
                     MessageHandler(
                         filters.Regex("Turn Off"), self.stop
-                    ),
-                    MessageHandler(filters.Regex("Return"), self.back)
+                    )
                 ],
                 # Этап `SECOND` - происходит то же самое, что и в описании этапа `FIRST`
-                TYPING_REPLY: [
+                IN_MENU: [
+                    MessageHandler(filters.Regex("Registration"), self.reg),
+                    MessageHandler(filters.Regex("Log In"), self.login),
+                    MessageHandler(filters.Regex("My profile"), self.profile),
+                    MessageHandler(filters.Regex("Log out"), self.logout),
+                    MessageHandler(filters.Regex("Chat GPT's stories"), self.gpt),
+                    MessageHandler(filters.Regex("Return"), self.back)
                 ],
-                TYPING_CHOICE: [
+                TURNED_OFF: [
+                    MessageHandler(filters.Regex("Start"), self.start)
                 ]
             },
             # точка выхода из разговора
-            fallbacks=[CommandHandler('start', self.start),
-                       MessageHandler(filters.Regex("Turn Off"), self.stop)
-                       ]
+            fallbacks=[CommandHandler('start', self.start)]
         )
         application.add_handler(conv_handler)
         application.run_polling()
