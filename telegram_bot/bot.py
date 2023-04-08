@@ -3,6 +3,7 @@ import logging
 from telegram.ext import Application, MessageHandler, filters, CommandHandler, ConversationHandler, CallbackQueryHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from dotenv import load_dotenv
+import sqlite3
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
@@ -25,6 +26,8 @@ class User:
             ([['Registration', 'Log in'], ["Chat GPT's stories", 'Return']],
              [['My profile', 'Log out'], ["Chat GPT's stories", 'Return']])
         ]
+        self.con = sqlite3.connect("films_db.sqlite")
+        self.cur = self.con.cursor()
 
     async def start(self, update, context):
         print(1)
@@ -51,6 +54,16 @@ class User:
         return IN_MENU
 
     async def stop(self, update, context):
+        self.keyboard_pos = 0
+        self.reply_keyboard = self.keyboards[self.keyboard_pos]
+        markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
+        await update.message.reply_text(
+            text="Всего доброго!",
+            reply_markup=markup
+        )
+        return TURNED_OFF
+
+    async def login(self, update, context):
         self.keyboard_pos = 0
         self.reply_keyboard = self.keyboards[self.keyboard_pos]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
@@ -107,3 +120,5 @@ class User:
 if __name__ == '__main__':
     us1 = User()
     us1.main()
+    self.con.close()
+print
