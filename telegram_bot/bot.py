@@ -9,7 +9,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
 )
 
-TURNED_OFF, STARTED, IN_MENU = range(3)
+TURNED_OFF, STARTED, IN_MENU, IN_LOGINING = range(4)
 
 logger = logging.getLogger(__name__)
 load_dotenv()
@@ -24,13 +24,14 @@ class User:
             [['Start']],
             [['Menu', 'Turn Off']],
             ([['Registration', 'Log in'], ["Chat GPT's stories", 'Return']],
-             [['My profile', 'Log out'], ["Chat GPT's stories", 'Return']])
+             [['My profile', 'Log out'], ["Chat GPT's stories", 'Return']]),
+            [['Return']]
         ]
-        self.con = sqlite3.connect("films_db.sqlite")
-        self.cur = self.con.cursor()
 
     async def start(self, update, context):
         print(1)
+        self.con = sqlite3.connect("../db/webproject.db")
+        self.cur = self.con.cursor()
         self.keyboard_pos += 1
         self.reply_keyboard = self.keyboards[self.keyboard_pos]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=False)
@@ -51,7 +52,7 @@ class User:
             text='that you may do',
             reply_markup=markup
         )
-        return IN_MENU
+        return IN_LOGINING
 
     async def stop(self, update, context):
         self.keyboard_pos = 0
@@ -63,15 +64,27 @@ class User:
         )
         return TURNED_OFF
 
+    async def get_login(self, update, context):
+        # login =
+        # print(login)
+        # res = self.cur.execute(f"""SELECT surname FROM users WHERE email = {login}""")
+        # print(res)
+        await update.message.reply_text(
+            text=self.cur.execute(f"""SELECT surname FROM users WHERE email = '{update.message.text}'""").fetchone()
+        )
+        # return IN_MENU
+
     async def login(self, update, context):
-        self.keyboard_pos = 0
+        print(2)
+        self.keyboard_pos = 3
         self.reply_keyboard = self.keyboards[self.keyboard_pos]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
         await update.message.reply_text(
-            text="Всего доброго!",
+            text="Введите логин",
             reply_markup=markup
         )
-        return TURNED_OFF
+
+        return IN_LOGINING
 
     async def back(self, update, context):
         self.keyboard_pos -= 1
@@ -98,15 +111,18 @@ class User:
                 ],
                 # Этап `SECOND` - происходит то же самое, что и в описании этапа `FIRST`
                 IN_MENU: [
-                    MessageHandler(filters.Regex("Registration"), self.reg),
-                    MessageHandler(filters.Regex("Log In"), self.login),
-                    MessageHandler(filters.Regex("My profile"), self.profile),
-                    MessageHandler(filters.Regex("Log out"), self.logout),
-                    MessageHandler(filters.Regex("Chat GPT's stories"), self.gpt),
+                    # MessageHandler(filters.Regex("Registration"), self.reg),
+                    MessageHandler(filters.Regex("Log in"), self.login),
+                    # MessageHandler(filters.Regex("My profile"), self.profile),
+                    # MessageHandler(filters.Regex("Log out"), self.logout),
+                    # MessageHandler(filters.Regex("Chat GPT's stories"), self.gpt),
                     MessageHandler(filters.Regex("Return"), self.back)
                 ],
                 TURNED_OFF: [
                     MessageHandler(filters.Regex("Start"), self.start)
+                ],
+                IN_LOGINING: [
+                    MessageHandler(filters.TEXT, self.get_login)
                 ]
             },
             # точка выхода из разговора
@@ -120,5 +136,4 @@ class User:
 if __name__ == '__main__':
     us1 = User()
     us1.main()
-    self.con.close()
-print
+    us1.con.close()
