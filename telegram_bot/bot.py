@@ -86,22 +86,16 @@ class User:
             return GET_PSWD
 
     async def entering_login(self, update, context):
-        print(2)
         self.keyboard_pos = 3
-        self.reply_keyboard = self.keyboards[self.keyboard_pos]
-        markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
         await update.message.reply_text(
             text="Введите логин",
-            reply_markup=markup
         )
         print(1)
         return CHECK_LOGIN
 
     async def entering_password(self, update, context):
-        markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
         await update.message.reply_text(
             text="Введите пароль",
-            reply_markup=markup
         )
         return CHECK_PSWD
 
@@ -129,11 +123,22 @@ class User:
 
     async def back(self, update, context):
         self.keyboard_pos -= 1
-        self.reply_keyboard = self.keyboards[self.keyboard_pos]
+        if self.keyboard_pos != 2:
+
+            self.reply_keyboard = self.keyboards[self.keyboard_pos]
+        else:
+            i = bool(not self.is_guest)
+            self.reply_keyboard = self.keyboards[self.keyboard_pos][i]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
         await update.message.reply_text(text='adadad',
                                         reply_markup=markup)
         return self.keyboard_pos
+
+    async def logout(self, update, context):
+        markup = ReplyKeyboardMarkup([['Come back to menu']], one_time_keyboard=True)
+        self.is_guest = True
+        await update.message.reply_text(text='Вы успешно вышли из аккаунта', reply_markup=markup)
+        return TURNED_OFF
 
     def main(self):
         application = Application.builder().token(token).build()
@@ -153,13 +158,14 @@ class User:
                     # MessageHandler(filters.Regex("Registration"), self.reg),
                     MessageHandler(filters.Regex("Log in"), self.entering_login),
                     # MessageHandler(filters.Regex("My profile"), self.profile),
-                    # MessageHandler(filters.Regex("Log out"), self.logout),
+                    MessageHandler(filters.Regex("Log out"), self.logout),
                     # MessageHandler(filters.Regex("Chat GPT's stories"), self.gpt),
                     MessageHandler(filters.Regex("Return"), self.back)
                 ],
                 TURNED_OFF: [
                     MessageHandler(filters.Regex("Start"), self.start),
-                    MessageHandler(filters.Regex("Come back to menu"), self.menu)
+                    MessageHandler(filters.Regex("Come back to menu"), self.menu),
+                    MessageHandler(filters.Regex("Вы успешно вышли из аккаунта"), self.menu)
                 ],
                 GET_LOGIN: [
                     MessageHandler(filters.Regex("Try again"), self.entering_login),
@@ -167,7 +173,7 @@ class User:
                 ],
                 CHECK_LOGIN: [
                     MessageHandler(filters.TEXT, self.check_login),
-                    MessageHandler(filters.Regex("Return"), self.back)
+                    # MessageHandler(filters.Regex("Return"), self.back)
                 ],
                 GET_PSWD: [
                     MessageHandler(filters.Regex("Next"), self.entering_password),
@@ -176,7 +182,7 @@ class User:
                 ],
                 CHECK_PSWD: [
                     MessageHandler(filters.TEXT, self.check_password),
-                    MessageHandler(filters.Regex("Return"), self.back)
+                    # MessageHandler(filters.Regex("Return"), self.back)
                 ]
             },
             # точка выхода из разговора
