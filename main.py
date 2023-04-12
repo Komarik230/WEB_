@@ -3,7 +3,7 @@ from data import db_session
 from data.users import User
 from data.forms import RegisterForm, LoginForm
 from flask_login import LoginManager, login_user, logout_user, login_required
-import os
+import os, datetime, holidays
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -36,7 +36,15 @@ def motivation():
 
 @app.route("/holiday")
 def holiday():
-    pass
+    rus_holidays = holidays.RUS()
+    day = datetime.date.today()
+    date = f'{day}'
+    if (date in rus_holidays) == True:
+        answer = rus_holidays.get(date)
+        return render_template("what_day.html")
+    else:
+        answer = "К сожалению, сегодня нет праздника:( Однако, Вы сами можете его себе устроить"
+        return render_template("what_day.html", text=answer)
 
 @app.route("/account")
 def account():
@@ -95,8 +103,8 @@ def logout():
 def main():
     name_db = 'webproject.db'
     db_session.global_init(f"db/{name_db}")
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='127.0.0.1', port=port)
 
 
 if __name__ == '__main__':
