@@ -5,6 +5,7 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardBut
 from dotenv import load_dotenv
 import sqlite3
 import hashlib
+import pswrd_generator
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
@@ -28,15 +29,13 @@ class User:
         self.keyboards = [
             [['Start']],
             [['Menu', 'Turn Off']],
-            ([['Registration', 'Log in'], ["Chat GPT's stories", 'Return']],
-             [['My profile', 'Log out'], ["Chat GPT's stories", 'Return']]),
-            [['Return']]
+            ([['Registration', 'Log in'], ["Chat GPT's stories", 'Back']],
+             [['My profile', 'Log out'], ["Chat GPT's stories", 'Back']]),
+            [['Back']]
         ]
 
     async def start(self, update, context):
         print(1)
-        self.con = sqlite3.connect("../db/webproject.db")
-        self.cur = self.con.cursor()
         self.keyboard_pos = 1
         self.reply_keyboard = self.keyboards[self.keyboard_pos]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=False)
@@ -54,6 +53,7 @@ class User:
             text="Всего доброго!",
             reply_markup=markup
         )
+        self.con.close()
         return TURNED_OFF
 
     async def back(self, update, context):
@@ -69,6 +69,8 @@ class User:
         return self.keyboard_pos
 
     async def menu(self, update, context):
+        self.con = sqlite3.connect("../db/webproject.db")
+        self.cur = self.con.cursor()
         self.keyboard_pos = 2
         if self.is_guest:
             self.reply_keyboard = self.keyboards[self.keyboard_pos][0]
@@ -90,8 +92,8 @@ class User:
         return CHECK_LOGIN
 
     async def check_login(self, update, context):
-        markup1 = ReplyKeyboardMarkup([['Try again'], ['Return']], one_time_keyboard=True)
-        markup2 = ReplyKeyboardMarkup([['Next'], ['Return']], one_time_keyboard=True)
+        markup1 = ReplyKeyboardMarkup([['Try again'], ['Back']], one_time_keyboard=True)
+        markup2 = ReplyKeyboardMarkup([['Next'], ['Back']], one_time_keyboard=True)
         self.username = update.message.text
         self.user_id = self.cur.execute(f"SELECT user_id FROM users WHERE username = '{self.username}'").fetchone()
         if self.user_id is None:
@@ -115,7 +117,7 @@ class User:
 
     async def check_password(self, update, context):
         markup1 = ReplyKeyboardMarkup([['Come back to menu']], one_time_keyboard=True)
-        markup2 = ReplyKeyboardMarkup([['Try again'], ['Return']], one_time_keyboard=True)
+        markup2 = ReplyKeyboardMarkup([['Try again'], ['Back']], one_time_keyboard=True)
         pswd = update.message.text
         hashed_password = hashlib.md5(pswd.encode('utf-8'))
         if self.cur.execute(
@@ -130,6 +132,7 @@ class User:
                                         WHERE user_id = ?""", self.user_id)
             self.is_guest = False
             self.keyboard_pos = 0
+            self.con.close()
             return TURNED_OFF
         else:
             await update.message.reply_text(
@@ -147,9 +150,11 @@ class User:
                             WHERE user_id = ?""", self.user_id)
         print(self.cur.execute("""SELECT is_authorized_tel FROM users WHERE user_id = ?""", self.user_id).fetchone()[0])
         await update.message.reply_text(text='Вы успешно вышли из аккаунта', reply_markup=markup)
+        self.con.close()
         return TURNED_OFF
 
     async def enter_email(self, update, context):
+        self.keyboard_pos = 3
         await update.message.reply_text(
             text="Введите почту, для которой хотите создать аккаунт"
         )
@@ -223,11 +228,30 @@ class User:
                     age: {self.age}""",
             reply_markup=markup2
         )
+        self.password = pswrd_generator.send(self.email, self.username)
         return END_REG
 
     async def end_reg(self, update, context):
-        hashed_password =
-        self.cur.execute(f"INSERT INTO users(email, username, name, surname, age, hashed_password) VALUES('{self.email}', '{self.username}', '{self.name}', '{self.surname}', {self.age}, '{hashed_password}')")
+        markup2 = ReplyKeyboardMarkup([['Come back to menu']], one_time_keyboard=True)
+        markup1 = ReplyKeyboardMarkup([['Try again'], ['Back']], one_time_keyboard=True)
+        hashed_password = hashlib.md5(self.password.encode('utf-8')).hexdigest()
+        self.cur.execute(
+            f"INSERT INTO users(email, username, name, surname, age, hashed_password) VALUES('{self.email}', '{self.username}', '{self.name}', '{self.surname}', {self.age}, '{hashed_password}')")
+        if self.cur.execute(f"SELECT user_id FROM users WHERE email = '{self.email}'").fetchone() is None:
+            await update.message.reply_text(
+                text="Ошибка создания аккаунта",
+                reply_markup=markup1
+            )
+            return GET_USNM
+        else:
+            await update.message.reply_text(
+                text="Аккаунт успешно создан",
+                reply_markup=markup2
+            )
+            self.keyboard_pos = 0
+            self.con.close()
+            return TURNED_OFF
+
     def main(self):
         application = Application.builder().token(token).build()
         conv_handler = ConversationHandler(
@@ -243,12 +267,12 @@ class User:
                 ],
                 # Этап `SECOND` - происходит то же самое, что и в описании этапа `FIRST`
                 IN_MENU: [
-                    # MessageHandler(filters.Regex("Registration"), self.reg),
+                    MessageHandler(filters.Regex("Registration"), self.enter_email),
                     MessageHandler(filters.Regex("Log in"), self.entering_login),
                     # MessageHandler(filters.Regex("My profile"), self.profile),
                     MessageHandler(filters.Regex("Log out"), self.logout),
                     # MessageHandler(filters.Regex("Chat GPT's stories"), self.gpt),
-                    MessageHandler(filters.Regex("Return"), self.back)
+                    MessageHandler(filters.Regex("Back"), self.back)
                 ],
                 TURNED_OFF: [
                     MessageHandler(filters.Regex("Start"), self.start),
@@ -257,7 +281,7 @@ class User:
                 ],
                 GET_LOGIN: [
                     MessageHandler(filters.Regex("Try again"), self.entering_login),
-                    MessageHandler(filters.Regex("Return"), self.back)
+                    MessageHandler(filters.Regex("Back"), self.back)
                 ],
                 CHECK_LOGIN: [
                     MessageHandler(filters.TEXT, self.check_login),
@@ -265,7 +289,7 @@ class User:
                 GET_PSWD: [
                     MessageHandler(filters.Regex("Next"), self.entering_password),
                     MessageHandler(filters.Regex("Try again"), self.entering_password),
-                    MessageHandler(filters.Regex("Return"), self.back)
+                    MessageHandler(filters.Regex("Back"), self.back)
                 ],
                 CHECK_PSWD: [
                     MessageHandler(filters.TEXT, self.check_password),
@@ -279,14 +303,17 @@ class User:
                     MessageHandler(filters.TEXT, self.check_email)
                 ],
                 GET_USNM: [
-                    MessageHandler(filters.TEXT, self.enter_usnm),
+                    MessageHandler(filters.Regex("Next"), self.enter_usnm),
                     MessageHandler(filters.Regex("Back"), self.back),
                     MessageHandler(filters.Regex("Enter again"), self.enter_usnm)
+                ],
+                CHECK_USNM: [
+                    MessageHandler(filters.TEXT, self.check_usnm)
                 ],
                 GET_OTHER: [
                     MessageHandler(filters.Regex("Next"), self.other_info),
                     MessageHandler(filters.Regex("Enter again"), self.other_info),
-                    MessageHandler(filters.Regex("Введенные данные неполны"), self.other_info)
+                    MessageHandler(filters.Regex("Back"), self.back)
                 ],
                 CHECK_OTHER: [
                     MessageHandler(filters.TEXT, self.check_other_info)
@@ -307,4 +334,3 @@ class User:
 if __name__ == '__main__':
     us1 = User()
     us1.main()
-    us1.con.close()
