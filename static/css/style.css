@@ -1,0 +1,118 @@
+ body {
+    background-color: #0000f !important;
+    color: black;
+  }
+
+.nav-item {
+    color: white;
+    font-weight: 400;
+    font-size: 20px !important;
+}
+
+.nav-item:hover {
+    font-weight: 500;
+    font-size: 20px !important;
+}
+
+
+.navbar-brand {
+   font-size: 24px !important;
+}
+
+.form_black {
+   background-color: white !important;
+   border-radius: 8px;
+   padding: 20px;
+   margin-top: 40px;
+}
+
+.page_border {
+   background-color: #d1d1d1 !important;
+   color: white !important;
+   border: 2px solid #45464F;
+   border-radius: 10px;
+   padding: 20px !important;
+   margin: 0 auto;
+   margin-top: 30px;
+}
+
+.menu_item {
+   padding: 5px !important;
+   font-size: 15px !important;
+}
+hr {
+   background-color: #2f26ab;
+   color: #FB4229;
+}
+.reposts {
+    color: #2f26ab !important;
+    font-size: 8px !important;
+    text-align: right;
+}
+
+.btn-warning {
+    background-color: #2f26ab !important;
+    border: 2px #FB4229 !important;
+}
+
+.comments {
+   font-size: 13px !important;
+}
+
+.com_label {
+   background-color: #121d2f !important;
+   color: white !important;
+   border: 2px solid #121d2f;
+   width: 25%;
+   border-radius: 10px;
+}
+.round_avatar {
+    margin-left:10px;
+    margin-right:10px;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50px !important;
+   }
+
+.round_office {
+    margin-left:10px;
+    margin-right:10px;
+    width: 210px !important;
+    height: 210px !important;
+    border-radius: 210px !important;
+}
+
+.round {
+    margin-left:15px;
+    margin-right:15px;
+    width:125px;
+    height: 125px;
+    border-radius: 125px !important;
+    box-shadow: 0 0 7px black;
+   }
+
+.vertical-menu {
+    width: 300px;
+    height: 350px;
+}
+
+.vertical-menu li {
+    background-color: #0000;
+    color: white;
+    display: white;
+    text-decoration: none;
+}
+
+.vertical-menu li:hover {
+    background-color: #fff;
+}
+
+.circle_habits {
+    background-color: #2f26ab !important;
+    color: white !important;
+    border: 2px solid #CF9B8F;
+    border-radius: 10px;
+    padding: 20px !important;
+    margin: 0 auto;
+    margin-top: 30px;
+}

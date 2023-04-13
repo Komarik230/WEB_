@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Новости -->
+<div class="page_border">
+    <h2>Новости &#128172;</h2>
+    {% for new in top_news%}
+    <div class="page_border" style="background-color: #121d2f !important;">
+        <div class="menu_item">
+            <h3><a><a><img
+                    src={{new['path']}}?dummy={{random_id}} alt="avatar"
+                    class="round_avatar"></a></a>{{new['creator']}}: {{new['title']}} </h3>
+        </div>
+        <div class="reposts">
+            <p>{{new['created_date']}}</p>
+        </div>
+        <div class="menu_item">
+            <p>{{new['content']}}</p>
+        </div>
+        <div class="menu_item">
+            <h6>Комментарии {% if current_user.is_authenticated %}
+                <a href="/com_add/{{ new['id'] }}" class="btn btn-primary"
+                   style=" height:25px; width:135px; font-size: 10px; margin-bottom:5px; margin-left: 30px;">Оставить
+                    комментарий</a>
+
+                {% endif %}
+            </h6>
+            {% for com in new['comms'] %}
+            <div class="com_label" style="margin-left: 20px; padding: 0; margin-top: 0; margin-bottom;">
+
+                <p style="font-size: 10px;">{{com['creator']}} - {{com['created_date']}}</p>
+                <p style="font-size: 9px;">{{com['content']}}
+                </p></div>
+            <hr style="color: white; background-color: white; padding: 0; margin-top: 0; margin-bottom;">
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+{% endblock %}

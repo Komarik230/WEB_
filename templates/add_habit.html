@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="btn-toolbar justify-content-between">
+    <h3></h3>
+</div>
+
+<form action="" method="post">
+    <div class="form_black">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.habit_name.label }}<br>
+            {{ form.habit_name(class="form-control") }}<br>
+            {% for error in form.habit_name.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        </p>
+        <p>
+            {{ form.duration.label }}<br>
+            {{ form.duration(class="form-control") }}<br>
+            {% for error in form.duration.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        </p>
+        <p>
+            {{ form.about_habit.label }}<br>
+            {{ form.about_habit(class="form-control") }}<br>
+            {% for error in form.about_habit.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        </p>
+
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+
+        {{message}}
+    </div>
+
+</form>
+{% endblock %}

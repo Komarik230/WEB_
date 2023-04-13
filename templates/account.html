@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h4 class="display-6">Профиль пользователя</h4>
+    <h5>Имя при регистрации: <u>{{ current_user.name }} {{ current_user.surname}}</u></h5>
+    <h5>Ваша почта: <u>{{ current_user.email }}</u></h5>
+    <h5>Фото профиля:</h5>
+    <br>
+    <div class="container">
+        <div class="row row-cols-auto">
+            <div class="col">
+                <img src="{{url_for('static', filename=photo)}}" width="150" height="150" alt="здесь должна была быть картинка, но не нашлась">
+            </div>
+            <div class="col">
+                <form class="login_form" method="post" enctype="multipart/form-data" style="line-height: 35px">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" id="photo" name="file">
+                    </div>
+                    <br><a href="/profile"><button type="submit" class="btn btn-primary">Изменить фото профиля</button></a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
