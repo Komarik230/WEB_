@@ -1,6 +1,8 @@
  body {
-    background-color: #0000f !important;
+   //* background-color: #0000f !important;*//
     color: black;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(123,0,255,0.644782913165266) 33%, rgba(23,121,9,0.5635504201680672) 72%);
   }
 
 .nav-item {
@@ -115,4 +117,14 @@ hr {
     padding: 20px !important;
     margin: 0 auto;
     margin-top: 30px;
+}
+
+.row2 {
+    text-align: center;
+}
+.col-md-4 {
+    display: inline-block;
+}
+.page_border {
+    color: black;
 }
