@@ -144,6 +144,10 @@ def index():
             break
     return render_template("main.html", title='Главная страница')  # form=form)
 
+@app.route("/planer")
+def calendar():
+    return render_template('calendar.html')
+
 
 @app.route("/stories")
 def stories():
@@ -474,8 +478,6 @@ def news():
 
 
 def main():
-    name_db = 'webproject.db'
-    db_session.global_init(f"db/{name_db}")
     port = int(os.environ.get("PORT", 8080))
     app.run(host='127.0.0.1', port=port)
 

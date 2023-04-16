@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <title>Какой сегодня праздник?</title>
@@ -26,4 +27,4 @@
     </div>
     <img src="{{url_for('static', filename='img/what_day_smile.png')}}">
 </body>
-</html>
+{% endblock %}
