@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <h1 class="multicolor-text">Какие сегодня праздники?</h1>
+    <img class="mem" src="{{url_for('static', filename='img/mem.png')}}">
+     {% for name in data %}
+        <span class="holiday">{{ name }}</span>
+        <p>                                                                                 </p>
+     {% endfor %}
+
+{% endblock %}

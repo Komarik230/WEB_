@@ -128,3 +128,27 @@ hr {
 .page_border {
     color: black;
 }
+.holiday {
+    background-color: rgba(0, 0, 0, 0.5);
+	font-size: 35px;
+	color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.5), -8px 0 0
+}
+.multicolor-text {
+            text-align: center;
+            font-size: 80px;
+            background: linear-gradient(to left,
+                    violet,
+                    indigo,
+                    blue,
+                    green,
+                    yellow,
+                    orange,
+                    red);
+            -webkit-background-clip: text;
+            color: transparent;
+}
+.mem {
+float: right;
+}

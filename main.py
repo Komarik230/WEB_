@@ -21,6 +21,8 @@ from forms.RegisterForm import RegisterForm
 from forms.AddHabit import AddHabitForm
 from forms.AddNews import AddNewsForm
 from forms.Office import OfficeForm
+import requests
+from bs4 import BeautifulSoup as BS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -162,15 +164,23 @@ def motivation():
 
 @app.route("/holiday")
 def holiday():
-    rus_holidays = holidays.RUS()
-    day = datetime.date.today()
-    date = f'{day}'
-    if (date in rus_holidays) == True:
-        answer = rus_holidays.get(date)
-        return render_template("what_day.html")
+    url = 'https://calend.online/holiday/'
+    resp = requests.get(url)
+    if resp.status_code == 200:
+        page = BS(resp.text, "html.parser")
+        table = page.find(id="main")
+        tr_list = table.find_all('ul', attrs={'class': 'holidays-list'})
+        for el in tr_list:
+            name = el.text.replace('<li>', '')
+        a = name.split('\n')
+        data = []
+        for i in a:
+            data.append(i.strip())
+            print(data)
     else:
-        answer = "К сожалению, сегодня нет праздника:( Однако, Вы сами можете его себе устроить"
-        return render_template("what_day.html", text=answer)
+        data = ['К сожалению, сегодня нет праздника:( Однако, Вы сами можете его себе устроить!']
+
+    return render_template('holiday.html', data=data, title='Праздники')
 
 
 @app.route("/account", methods=['POST', 'GET'])
