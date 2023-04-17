@@ -1,8 +1,7 @@
 from data.forms import RegisterForm, LoginForm
-import holidays, requests
+import random
 import datetime
 import os
-import random
 from flask import Flask, render_template, request, redirect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_restful import abort
@@ -163,7 +162,11 @@ def mems():
 
 @app.route("/motivation")
 def motivation():
-    pass
+    with open("static//motivation.txt", "r", encoding="utf-8") as motivation:
+        motiv = motivation.read().split('\n')
+        mot = random.choice(motiv)
+
+    return render_template("motivation.html", title='Мотивирующие цитаты', mot=mot)
 
 
 @app.route("/holiday")
