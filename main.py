@@ -228,56 +228,56 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-@app.route("/add_habit", methods=['GET', 'POST'])
-def add_habit():
-    """
-    Добавление привычки
-    :return: шаблон для добавления
-    """
-    form = AddHabitForm()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        hab_id = len(db_sess.query(Habits).all()) + 1
-        habit = Habits()
-        habit.creator = current_user.id
-        habit.count = 0
-        habit.reposts = 0
-        habit.type = form.habit_name.data
-        habit.period = form.duration.data
-        habit.about_link = form.about_habit.data
-        db_sess.add(habit)
-        db_sess.commit()
-        if current_user.habit:
-            current_user.habit += ';{}'.format(hab_id)
-        else:
-            current_user.habit = hab_id
-        db_sess.merge(current_user)
-        db_sess.commit()
-        return redirect('/office')
-    return render_template("add_habit.html", form=form, title='Добавление привычки')
-
-
-@app.route("/add_habit/<int:habit_id>", methods=['GET', 'POST'])
-def repost_habit(habit_id):
-    """
-    Обработка репоста к себе привычки
-    :param habit_id: id привычки в DB
-    :return: главная страница(обновленная DB)
-    """
-    habit_id = habit_id
-    db_sess = db_session.create_session()
-    to_new = db_sess.query(User).filter(User.id == current_user.id).first()
-    if to_new.habit and str(habit_id) not in str(to_new.habit):
-        to_new.habit = str(to_new.habit) + ';' + str(habit_id)
-    if not to_new.habit:
-        to_new.habit = str(habit_id)
-    db_sess.add(to_new)
-
-    to_new2 = db_sess.query(Habits).filter(Habits.id == habit_id).first()
-    to_new2.reposts = str(int(to_new2.reposts) + 1)
-    db_sess.add(to_new2)
-    db_sess.commit()
-    return redirect('/')
+# @app.route("/add_habit", methods=['GET', 'POST'])
+# def add_habit():
+#     """
+#     Добавление привычки
+#     :return: шаблон для добавления
+#     """
+#     form = AddHabitForm()
+#     if form.validate_on_submit():
+#         db_sess = db_session.create_session()
+#         hab_id = len(db_sess.query(Habits).all()) + 1
+#         habit = Habits()
+#         habit.creator = current_user.id
+#         habit.count = 0
+#         habit.reposts = 0
+#         habit.type = form.habit_name.data
+#         habit.period = form.duration.data
+#         habit.about_link = form.about_habit.data
+#         db_sess.add(habit)
+#         db_sess.commit()
+#         if current_user.habit:
+#             current_user.habit += ';{}'.format(hab_id)
+#         else:
+#             current_user.habit = hab_id
+#         db_sess.merge(current_user)
+#         db_sess.commit()
+#         return redirect('/office')
+#     return render_template("add_habit.html", form=form, title='Добавление привычки')
+#
+#
+# @app.route("/add_habit/<int:habit_id>", methods=['GET', 'POST'])
+# def repost_habit(habit_id):
+#     """
+#     Обработка репоста к себе привычки
+#     :param habit_id: id привычки в DB
+#     :return: главная страница(обновленная DB)
+#     """
+#     habit_id = habit_id
+#     db_sess = db_session.create_session()
+#     to_new = db_sess.query(User).filter(User.id == current_user.id).first()
+#     if to_new.habit and str(habit_id) not in str(to_new.habit):
+#         to_new.habit = str(to_new.habit) + ';' + str(habit_id)
+#     if not to_new.habit:
+#         to_new.habit = str(habit_id)
+#     db_sess.add(to_new)
+#
+#     to_new2 = db_sess.query(Habits).filter(Habits.id == habit_id).first()
+#     to_new2.reposts = str(int(to_new2.reposts) + 1)
+#     db_sess.add(to_new2)
+#     db_sess.commit()
+#     return redirect('/')
 
 
 @app.route("/com_add/<int:new_id>", methods=['GET', 'POST'])
@@ -492,7 +492,7 @@ def news():
 
 def main():
     port = int(os.environ.get("PORT", 8080))
-    app.run(host='127.0.0.1', port=port)
+    app.run(use_reloader=False, host='127.0.0.1', port=port)
 
 
 if __name__ == '__main__':

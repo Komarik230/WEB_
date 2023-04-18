@@ -37,24 +37,24 @@
                 </div>
             </div>
         </div>
-        <hr>
-        <div class="page_border">
-            <h2>Мои привычки &#128077; <a href="/add_habit" class="btn btn-warning"
-                       style=" height:25px; width:135px; font-size: 10px; margin-bottom:5px; margin-left: 30px;">Добавить привычку</a></h2>
-            {% for habit in user_habits%}
-            <div class="circle_habits" style="background-color: #102C54 !important;">
-                <div class="display-6">
-                    <p><strong>
-                        <ins><big>{{habit['about_link']}}</big></ins>
-                    </strong></p>
-                </div>
-                <div class="menu_item">
-                    <p>{{habit['type']}}</p>
-                </div>
-            </div>
-            <!--            <div style="margin-left: 62px;">{{ form.submit(type="submit", class="btn btn-primary")}}</div>-->
-            {% endfor %} <br>
-        </div>
+<!--        <hr>-->
+<!--        <div class="page_border">-->
+<!--            <h2>Мои привычки &#128077; <a href="/add_habit" class="btn btn-warning"-->
+<!--                       style=" height:25px; width:135px; font-size: 10px; margin-bottom:5px; margin-left: 30px;">Добавить привычку</a></h2>-->
+<!--            {% for habit in user_habits%}-->
+<!--            <div class="circle_habits" style="background-color: #102C54 !important;">-->
+<!--                <div class="display-6">-->
+<!--                    <p><strong>-->
+<!--                        <ins><big>{{habit['about_link']}}</big></ins>-->
+<!--                    </strong></p>-->
+<!--                </div>-->
+<!--                <div class="menu_item">-->
+<!--                    <p>{{habit['type']}}</p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash;            <div style="margin-left: 62px;">{{ form.submit(type="submit", class="btn btn-primary")}}</div>&ndash;&gt;-->
+<!--            {% endfor %} <br>-->
+<!--        </div>-->
         <hr>
         <h2>Мои новости &#128227; <a href="/add_news" class="btn btn-warning"
                        style=" height:25px; width:135px; font-size: 10px; margin-bottom:5px; margin-left: 30px;">Добавить новость</a></h2>
