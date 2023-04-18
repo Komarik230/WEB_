@@ -6,20 +6,22 @@ from dotenv import load_dotenv
 import sqlite3
 import hashlib
 import pswrd_generator
+from data import db_session
+from data import users
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
 )
 
-TURNED_OFF, STARTED, IN_MENU, GET_LOGIN, GET_PSWD, CHECK_LOGIN, CHECK_PSWD, GET_EMAIL, CHECK_EMAIL, GET_USNM, CHECK_USNM, GET_OTHER, CHECK_OTHER, END_REG = range(
-    14)
+TURNED_OFF, STARTED, IN_MENU, GET_LOGIN, GET_PSWD, CHECK_LOGIN, CHECK_PSWD, GET_EMAIL, CHECK_EMAIL, GET_USNM, CHECK_USNM, GET_OTHER, CHECK_OTHER, MAKING_PSWRD, END_REG, SEE_PSWRD = range(
+    16)
 
 logger = logging.getLogger(__name__)
 load_dotenv()
 token = os.getenv('token')
 
 
-class User:
+class Bot:
     def __init__(self):
         self.user_id = None
         self.is_guest = True
@@ -33,6 +35,11 @@ class User:
              [['My profile', 'Log out'], ["Chat GPT's stories", 'Back']]),
             [['Back']]
         ]
+        # session = db_session.create_session()
+        # questions = session.query(users.User).filter(
+        #     users.User.id == 1,
+        # ).all()
+        # print(questions)
 
     async def start(self, update, context):
         print(1)
@@ -69,7 +76,7 @@ class User:
         return self.keyboard_pos
 
     async def menu(self, update, context):
-        self.con = sqlite3.connect("../db/webproject.db")
+        self.con = sqlite3.connect("../db/habits.db")
         self.cur = self.con.cursor()
         self.keyboard_pos = 2
         if self.is_guest:
@@ -95,7 +102,7 @@ class User:
         markup1 = ReplyKeyboardMarkup([['Try again'], ['Back']], one_time_keyboard=True)
         markup2 = ReplyKeyboardMarkup([['Next'], ['Back']], one_time_keyboard=True)
         self.username = update.message.text
-        self.user_id = self.cur.execute(f"SELECT user_id FROM users WHERE username = '{self.username}'").fetchone()
+        self.user_id = self.cur.execute(f"SELECT id FROM users WHERE nickname = '{self.username}'").fetchone()
         if self.user_id is None:
             await update.message.reply_text(
                 text="Аккаунта не существует",
@@ -121,7 +128,7 @@ class User:
         pswd = update.message.text
         hashed_password = hashlib.md5(pswd.encode('utf-8'))
         if self.cur.execute(
-                """SELECT hashed_password FROM users WHERE user_id = ?""", self.user_id).fetchone()[
+                """SELECT hashed_password FROM users WHERE id = ?""", self.user_id).fetchone()[
             0] == hashed_password.hexdigest():
             await update.message.reply_text(
                 text=f"Вы вошли в систему под логином {self.username}",
@@ -129,7 +136,7 @@ class User:
             )
             self.cur.execute(f"""UPDATE users
                                         SET is_authorized_tel = 1
-                                        WHERE user_id = ?""", self.user_id)
+                                        WHERE id = ?""", self.user_id)
             self.is_guest = False
             self.keyboard_pos = 0
             self.con.close()
@@ -147,8 +154,8 @@ class User:
         print(self.cur.execute("""SELECT is_authorized_tel FROM users WHERE user_id = ?""", self.user_id).fetchone()[0])
         self.cur.execute(f"""UPDATE users
                             SET is_authorized_tel = 0
-                            WHERE user_id = ?""", self.user_id)
-        print(self.cur.execute("""SELECT is_authorized_tel FROM users WHERE user_id = ?""", self.user_id).fetchone()[0])
+                            WHERE id = ?""", self.user_id)
+        print(self.cur.execute("""SELECT is_authorized_tel FROM users WHERE id = ?""", self.user_id).fetchone()[0])
         await update.message.reply_text(text='Вы успешно вышли из аккаунта', reply_markup=markup)
         self.con.close()
         return TURNED_OFF
@@ -164,7 +171,7 @@ class User:
         markup1 = ReplyKeyboardMarkup([['Enter again'], ['Back']], one_time_keyboard=True)
         markup2 = ReplyKeyboardMarkup([['Next'], ['Back']], one_time_keyboard=True)
         self.email = update.message.text
-        self.user_id = self.cur.execute(f"SELECT user_id FROM users WHERE email = '{self.email}'").fetchone()
+        self.user_id = self.cur.execute(f"SELECT id FROM users WHERE email = '{self.email}'").fetchone()
         if self.user_id is not None:
             await update.message.reply_text(
                 text="Аккаунт уже существует",
@@ -188,7 +195,7 @@ class User:
         markup1 = ReplyKeyboardMarkup([['Enter again'], ['Back']], one_time_keyboard=True)
         markup2 = ReplyKeyboardMarkup([['Next']], one_time_keyboard=True)
         self.username = update.message.text
-        self.user_id = self.cur.execute(f"SELECT user_id FROM users WHERE username = '{self.username}'").fetchone()
+        self.user_id = self.cur.execute(f"SELECT id FROM users WHERE nickname = '{self.username}'").fetchone()
         if self.user_id is not None:
             await update.message.reply_text(
                 text="Имя пользователя занято",
@@ -210,7 +217,7 @@ class User:
 
     async def check_other_info(self, update, context):
         markup1 = ReplyKeyboardMarkup([['Enter again'], ['Back']], one_time_keyboard=True)
-        markup2 = ReplyKeyboardMarkup([['Create profile'], ['Back']], one_time_keyboard=True)
+        markup2 = ReplyKeyboardMarkup([['Make password'], ['Generate password', 'Back']], one_time_keyboard=True)
         text = update.message.text.split(' ')
         if len(text) != 3:
             await update.message.reply_text(
@@ -218,17 +225,41 @@ class User:
                 reply_markup=markup1
             )
             return GET_OTHER
-        self.name, self.surname, self.age = text[0], text[1], text[2]
-        await update.message.reply_text(
-            text=f"""Вот данные вашего аккаунта:
-                    username: {self.username}
-                    email: {self.email}
-                    name: {self.name}
-                    surname: {self.surname}
-                    age: {self.age}""",
-            reply_markup=markup2
-        )
+        else:
+            self.name, self.surname, self.age = text[0], text[1], text[2]
+            await update.message.reply_text(
+                text=f"""Вот данные вашего аккаунта:
+                        username: {self.username}
+                        email: {self.email}
+                        name: {self.name}
+                        surname: {self.surname}
+                        age: {self.age}""",
+                reply_markup=markup2
+            )
+            return MAKING_PSWRD
+
+    async def generate(self, update, context):
+        markup = ReplyKeyboardMarkup([['Create Account'], ['Back']], one_time_keyboard=True)
         self.password = pswrd_generator.send(self.email, self.username)
+        await update.message.reply_text(
+            text=f"Пароль был отправлен на почту {self.email}",
+            reply_markup=markup
+        )
+        return END_REG
+
+    async def ask_pswrd(self, update, context):
+        await update.message.reply_text(
+            text=f"Введите пароль"
+        )
+        return SEE_PSWRD
+
+    async def make_pswrd(self, update, context):
+        self.password = update.message.text
+        markup = ReplyKeyboardMarkup([['Create Account'], ['Back']], one_time_keyboard=True)
+        await update.message.reply_text(
+            text=f"Вы ввели пароль:  {self.password}",
+            reply_markup=markup
+        )
         return END_REG
 
     async def end_reg(self, update, context):
@@ -236,8 +267,8 @@ class User:
         markup1 = ReplyKeyboardMarkup([['Try again'], ['Back']], one_time_keyboard=True)
         hashed_password = hashlib.md5(self.password.encode('utf-8')).hexdigest()
         self.cur.execute(
-            f"INSERT INTO users(email, username, name, surname, age, hashed_password) VALUES('{self.email}', '{self.username}', '{self.name}', '{self.surname}', {self.age}, '{hashed_password}')")
-        if self.cur.execute(f"SELECT user_id FROM users WHERE email = '{self.email}'").fetchone() is None:
+            f"INSERT INTO users(email, nickname, name, surname, age, hashed_password, is_authorized_tel) VALUES('{self.email}', '{self.username}', '{self.name}', '{self.surname}', {self.age}, '{hashed_password}', '1')")
+        if self.cur.execute(f"SELECT id FROM users WHERE email = '{self.email}'").fetchone() is None:
             await update.message.reply_text(
                 text="Ошибка создания аккаунта",
                 reply_markup=markup1
@@ -319,8 +350,16 @@ class User:
                     MessageHandler(filters.TEXT, self.check_other_info)
                 ],
                 END_REG: [
-                    MessageHandler(filters.Regex("Create profile"), self.end_reg),
-                    MessageHandler(filters.Regex("Back"), self.back)
+                    MessageHandler(filters.Regex("Back"), self.back),
+                    MessageHandler(filters.Regex("Create Account"), self.end_reg),
+                ],
+                MAKING_PSWRD: [
+                    MessageHandler(filters.Regex("Back"), self.back),
+                    MessageHandler(filters.Regex("Make password"), self.ask_pswrd),
+                    MessageHandler(filters.Regex('Generate password'), self.generate)
+                ],
+                SEE_PSWRD: [
+                    MessageHandler(filters.TEXT, self.make_pswrd),
                 ]
             },
             # точка выхода из разговора
@@ -332,5 +371,5 @@ class User:
 
 # Запускаем функцию main() в случае запуска скрипта.
 if __name__ == '__main__':
-    us1 = User()
+    us1 = Bot()
     us1.main()
