@@ -157,7 +157,11 @@ def stories():
 
 @app.route("/mems")
 def mems():
-    pass
+    with open("static//mems.txt", "r", encoding="utf-8") as memas:
+        memas = memas.read().split('\n')
+        mem = random.choice(memas)
+    return render_template("mems.html", title='мемы', mem=mem)
+
 
 
 @app.route("/motivation")
