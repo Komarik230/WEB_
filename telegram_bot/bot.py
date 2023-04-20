@@ -6,15 +6,17 @@ from dotenv import load_dotenv
 import sqlite3
 import hashlib
 import pswrd_generator
-from data import db_session
-from data import users
+from random import choice
+from story_generator import gen_st
+# from data import db_session
+# from data import users
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
 )
 
-TURNED_OFF, STARTED, IN_MENU, GET_LOGIN, GET_PSWD, CHECK_LOGIN, CHECK_PSWD, GET_EMAIL, CHECK_EMAIL, GET_USNM, CHECK_USNM, GET_OTHER, CHECK_OTHER, MAKING_PSWRD, END_REG, SEE_PSWRD = range(
-    16)
+TURNED_OFF, STARTED, IN_MENU, GET_LOGIN, GET_PSWD, CHECK_LOGIN, CHECK_PSWD, GET_EMAIL, CHECK_EMAIL, GET_USNM, CHECK_USNM, GET_OTHER, CHECK_OTHER, MAKING_PSWRD, END_REG, SEE_PSWRD, CHOOSE_STORY = range(
+    17)
 
 logger = logging.getLogger(__name__)
 load_dotenv()
@@ -28,6 +30,9 @@ class Bot:
         self.is_authorized = 0
         self.keyboard_pos = 0
         self.current = 0
+        self.themes_for_anecd = ['alcohol', 'army', 'women', 'pets', 'life',
+                                 'love', 'men', 'armenian', 'nationality',
+                                 'hunting', 'fishing', 'doctors', 'school', 'elections']
         self.keyboards = [
             [['Start']],
             [['Menu', 'Turn Off']],
@@ -71,8 +76,7 @@ class Bot:
             i = bool(not self.is_guest)
             self.reply_keyboard = self.keyboards[self.keyboard_pos][i]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=True)
-        await update.message.reply_text(text='adadad',
-                                        reply_markup=markup)
+        await update.message.reply_text(reply_markup=markup, text='Назад')
         return self.keyboard_pos
 
     async def menu(self, update, context):
@@ -283,6 +287,34 @@ class Bot:
             self.con.close()
             return TURNED_OFF
 
+    async def choose_genre(self, update, context):
+        self.keyboard_pos = 3
+        markup = ReplyKeyboardMarkup([['Funny story'], ['Motivating story'], ['Back']], one_time_keyboard=True)
+        await update.message.reply_text(
+            reply_markup=markup,
+            text='Выберите тип истории'
+        )
+        return CHOOSE_STORY
+
+    async def req_fun(self, update, context):
+        markup = ReplyKeyboardMarkup([['Funny story'], ['Motivating story'], ['Back']], one_time_keyboard=True)
+        theme = choice(self.themes_for_anecd)
+        story = gen_st(f'Come up with an average length anecdote on the topic of {theme}')
+        await update.message.reply_text(
+            reply_markup=markup,
+            text=story
+        )
+        return CHOOSE_STORY
+
+    async def req_motiv(self, update, context):
+        markup = ReplyKeyboardMarkup([['Funny story'], ['Motivating story'], ['Back']], one_time_keyboard=True)
+        story = gen_st(f'Come up with an average length story on the topic of motivation and inspiration')
+        await update.message.reply_text(
+            reply_markup=markup,
+            text=story
+        )
+        return CHOOSE_STORY
+
     def main(self):
         application = Application.builder().token(token).build()
         conv_handler = ConversationHandler(
@@ -302,7 +334,12 @@ class Bot:
                     MessageHandler(filters.Regex("Log in"), self.entering_login),
                     # MessageHandler(filters.Regex("My profile"), self.profile),
                     MessageHandler(filters.Regex("Log out"), self.logout),
-                    # MessageHandler(filters.Regex("Chat GPT's stories"), self.gpt),
+                    MessageHandler(filters.Regex("Chat GPT's stories"), self.choose_genre),
+                    MessageHandler(filters.Regex("Back"), self.back)
+                ],
+                CHOOSE_STORY: [
+                    MessageHandler(filters.Regex("Funny story"), self.req_fun),
+                    MessageHandler(filters.Regex("Motivating story"), self.req_motiv),
                     MessageHandler(filters.Regex("Back"), self.back)
                 ],
                 TURNED_OFF: [
