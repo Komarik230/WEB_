@@ -157,11 +157,21 @@ def stories():
 
 @app.route("/mems")
 def mems():
-    pass
+    """
+    рандомная загрузка картинок из текстового файла(url)
+    """
+    with open("static//mems.txt", "r", encoding="utf-8") as memas:
+        memas = memas.read().split('\n')
+        mem = random.choice(memas)
+    return render_template("mems.html", title='мемы', mem=mem)
+
 
 
 @app.route("/motivation")
 def motivation():
+    """
+    рандомная загрузка цитат из текстового файла
+    """
     with open("static//motivation.txt", "r", encoding="utf-8") as motivation:
         motiv = motivation.read().split('\n')
         mot = random.choice(motiv)
@@ -171,19 +181,23 @@ def motivation():
 
 @app.route("/holiday")
 def holiday():
-    url = 'https://calend.online/holiday/'
+    """
+    парсинг сайта при помощи beautifulsoup
+    """
+    url = 'https://calend.online/holiday/' # ссылка на сайт
     resp = requests.get(url)
     if resp.status_code == 200:
         page = BS(resp.text, "html.parser")
+        # ищем нужные данные в html коде страницы, чтобы их забирать
         table = page.find(id="main")
         tr_list = table.find_all('ul', attrs={'class': 'holidays-list'})
+        # редактируем данные
         for el in tr_list:
             name = el.text.replace('<li>', '')
         a = name.split('\n')
         data = []
         for i in a:
             data.append(i.strip())
-            print(data)
     else:
         data = ['К сожалению, сегодня нет праздника:( Однако, Вы сами можете его себе устроить!']
 
@@ -226,58 +240,6 @@ def reqister():
         db_sess.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
-
-
-# @app.route("/add_habit", methods=['GET', 'POST'])
-# def add_habit():
-#     """
-#     Добавление привычки
-#     :return: шаблон для добавления
-#     """
-#     form = AddHabitForm()
-#     if form.validate_on_submit():
-#         db_sess = db_session.create_session()
-#         hab_id = len(db_sess.query(Habits).all()) + 1
-#         habit = Habits()
-#         habit.creator = current_user.id
-#         habit.count = 0
-#         habit.reposts = 0
-#         habit.type = form.habit_name.data
-#         habit.period = form.duration.data
-#         habit.about_link = form.about_habit.data
-#         db_sess.add(habit)
-#         db_sess.commit()
-#         if current_user.habit:
-#             current_user.habit += ';{}'.format(hab_id)
-#         else:
-#             current_user.habit = hab_id
-#         db_sess.merge(current_user)
-#         db_sess.commit()
-#         return redirect('/office')
-#     return render_template("add_habit.html", form=form, title='Добавление привычки')
-#
-#
-# @app.route("/add_habit/<int:habit_id>", methods=['GET', 'POST'])
-# def repost_habit(habit_id):
-#     """
-#     Обработка репоста к себе привычки
-#     :param habit_id: id привычки в DB
-#     :return: главная страница(обновленная DB)
-#     """
-#     habit_id = habit_id
-#     db_sess = db_session.create_session()
-#     to_new = db_sess.query(User).filter(User.id == current_user.id).first()
-#     if to_new.habit and str(habit_id) not in str(to_new.habit):
-#         to_new.habit = str(to_new.habit) + ';' + str(habit_id)
-#     if not to_new.habit:
-#         to_new.habit = str(habit_id)
-#     db_sess.add(to_new)
-#
-#     to_new2 = db_sess.query(Habits).filter(Habits.id == habit_id).first()
-#     to_new2.reposts = str(int(to_new2.reposts) + 1)
-#     db_sess.add(to_new2)
-#     db_sess.commit()
-#     return redirect('/')
 
 
 @app.route("/com_add/<int:new_id>", methods=['GET', 'POST'])
