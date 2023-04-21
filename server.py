@@ -71,8 +71,7 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/logout')
-@login_required
+@app.route('/logout')@login_required
 def logout():
     """
     Выход пользователя из аккаунта
