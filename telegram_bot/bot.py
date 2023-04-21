@@ -1,4 +1,5 @@
 import os
+import asyncio
 import logging
 from telegram.ext import Application, MessageHandler, filters, CommandHandler, ConversationHandler, CallbackQueryHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
@@ -8,6 +9,8 @@ import hashlib
 import pswrd_generator
 from random import choice
 from story_generator import gen_st
+import datetime
+
 # from data import db_session
 # from data import users
 
@@ -40,6 +43,12 @@ class Bot:
              [['My profile', 'Log out'], ["Chat GPT's stories", 'Back']]),
             [['Back']]
         ]
+        import pathlib
+        from pathlib import Path
+
+        import os.path
+        # with open('../static/screens/motivation.txt', 'r') as text:
+        #     self.phrase = text.readlines()
         # session = db_session.create_session()
         # questions = session.query(users.User).filter(
         #     users.User.id == 1,
@@ -47,7 +56,10 @@ class Bot:
         # print(questions)
 
     async def start(self, update, context):
-        print(1)
+        dt = datetime.datetime.now()
+        delta = int(((24 - dt.hour - 1) * 60 * 60) + ((60 - dt.minute - 1) * 60) + (60 - dt.second))
+        print(delta)
+        context.job_queue.run_repeating(await context.bot.send_message(context..chat_id, text=f'Новый день настал, проведите его продуктивно\n\nфвфвффв'), interval=10, first=10)
         self.keyboard_pos = 1
         self.reply_keyboard = self.keyboards[self.keyboard_pos]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=False)
