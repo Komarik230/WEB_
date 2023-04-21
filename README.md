@@ -13,6 +13,8 @@
 ![alt text](static/screens/login.png)
 * На странице /planer можно воспользоваться полноценным календарем на промежуток день/неделя/месяц  
 ![alt text](static/screens/planer.png)
+* На странице /mems можно посмотреть различные мемы и поднять себе настроение 
+![alt text](static/screens/mems.png)
 * На странице /motivation можно получить разные мотивирующие цитаты 
 ![alt text](static/screens/motivation.png)
 * На странице /holiday можно узнать какие праздники отмечаются по всему миру
