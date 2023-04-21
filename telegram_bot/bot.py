@@ -59,7 +59,7 @@ class Bot:
         dt = datetime.datetime.now()
         delta = int(((24 - dt.hour - 1) * 60 * 60) + ((60 - dt.minute - 1) * 60) + (60 - dt.second))
         print(delta)
-        context.job_queue.run_repeating(await context.bot.send_message(context..chat_id, text=f'Новый день настал, проведите его продуктивно\n\nфвфвффв'), interval=10, first=10)
+        # context.job_queue.run_repeating(await context.bot.send_message(context..chat_id, text=f'Новый день настал, проведите его продуктивно\n\nфвфвффв'), interval=10, first=10)
         self.keyboard_pos = 1
         self.reply_keyboard = self.keyboards[self.keyboard_pos]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=False)
