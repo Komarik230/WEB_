@@ -60,4 +60,4 @@ API_TOKEN=<YOU-API-TELEGRAM-TOKEN>
 достаточно в консоли (терминале) вызвать команду  
 pip install -r requirements.txt
 
-Проект размещен в интернете по адресу: 
+Проект размещен в интернете по адресу: https://root-cheerful-dingo.glitch.me/
