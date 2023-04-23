@@ -23,6 +23,3 @@ def generate():
             '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
     sampling = random.choices(symb, k=random.randint(8, 11))
     return ''.join(sampling)
-
-
-send('laptevegor666@gmail.com', 'Egor')

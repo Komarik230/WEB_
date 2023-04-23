@@ -13,6 +13,10 @@
 ![alt text](static/screens/login.png)
 * На странице /planer можно воспользоваться полноценным календарем на промежуток день/неделя/месяц  
 ![alt text](static/screens/planer.png)
+* При нажатии на "истории" на главной странице пользователь переходит в тг_бот 
+![alt text](static/screens/stories.png)
+* На странице /mems можно посмотреть различные мемы и поднять себе настроение 
+![alt text](static/screens/mems.png)
 * На странице /motivation можно получить разные мотивирующие цитаты 
 ![alt text](static/screens/motivation.png)
 * На странице /holiday можно узнать какие праздники отмечаются по всему миру
@@ -21,8 +25,8 @@
 ![alt text](static/screens/news.png)
 * Личный кабинет, в котором можно установить аватарку, указать свои интересы, данные, создать привычку или новость, которые будут видны другим пользователям
 ![alt text](static/screens/office.png)
-* Бот предназначен для ...  Команды бота ...  
-![alt text](screens/bot.png) 
+* Бот предназначен для создания историй. 
+![alt text](static/screens/bot.png) 
 
  
 
@@ -56,4 +60,4 @@ API_TOKEN=<YOU-API-TELEGRAM-TOKEN>
 достаточно в консоли (терминале) вызвать команду  
 pip install -r requirements.txt
 
-Проект размещен в интернете по адресу: 
+Проект размещен в интернете по адресу: https://root-cheerful-dingo.glitch.me/
