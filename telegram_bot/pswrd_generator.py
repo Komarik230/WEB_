@@ -3,15 +3,14 @@ import random
 
 
 def send(email, username):
-    pass
-#     smtpObj = smtplib.SMTP('smtp.mail.ru', 587)
-#     smtpObj.starttls()
-#     smtpObj.login('web_yl2023@mail.ru', 'R2vnsbnJwULPV3BXjNun')
-#     pswrd = generate()
-#     smtpObj.sendmail("web_yl2023@mail.ru", email, f"""That is your password for user {username}
-# {pswrd}""")
-#     smtpObj.quit()
-#     return pswrd
+    smtpObj = smtplib.SMTP('smtp.mail.ru', 587)
+    smtpObj.starttls()
+    smtpObj.login('web_yl2023@mail.ru', 'R2vnsbnJwULPV3BXjNun')
+    pswrd = generate()
+    smtpObj.sendmail("web_yl2023@mail.ru", email, f"""That is your password for user {username}
+{pswrd}""")
+    smtpObj.quit()
+    return pswrd
 
 
 def generate():

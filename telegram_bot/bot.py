@@ -11,9 +11,6 @@ from random import choice
 from story_generator import gen_st
 import datetime
 
-# from data import db_session
-# from data import users
-
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
 )
@@ -47,7 +44,7 @@ class Bot:
         from pathlib import Path
 
         import os.path
-        # with open('../static/screens/motivation.txt', 'r') as text:
+        # with open('../static/motivation.txt', 'r') as text:
         #     self.phrase = text.readlines()
         # session = db_session.create_session()
         # questions = session.query(users.User).filter(
@@ -59,7 +56,7 @@ class Bot:
         dt = datetime.datetime.now()
         delta = int(((24 - dt.hour - 1) * 60 * 60) + ((60 - dt.minute - 1) * 60) + (60 - dt.second))
         print(delta)
-        context.job_queue.run_repeating(await context.bot.send_message(context..chat_id, text=f'Новый день настал, проведите его продуктивно\n\nфвфвффв'), interval=10, first=10)
+        # context.job_queue.run_repeating(await context.bot.send_message(chat_id=context.job.chat_id, text=f'Новый день настал, проведите его продуктивно\n\n{choice(self.phrase)}'), interval=10, first=10)
         self.keyboard_pos = 1
         self.reply_keyboard = self.keyboards[self.keyboard_pos]
         markup = ReplyKeyboardMarkup(self.reply_keyboard, one_time_keyboard=False)
@@ -119,6 +116,8 @@ class Bot:
         markup2 = ReplyKeyboardMarkup([['Next'], ['Back']], one_time_keyboard=True)
         self.username = update.message.text
         self.user_id = self.cur.execute(f"SELECT id FROM users WHERE nickname = '{self.username}'").fetchone()
+        print(self.username)
+        print(self.user_id)
         if self.user_id is None:
             await update.message.reply_text(
                 text="Аккаунта не существует",
@@ -155,7 +154,6 @@ class Bot:
                                         WHERE id = ?""", self.user_id)
             self.is_guest = False
             self.keyboard_pos = 0
-            self.con.close()
             return TURNED_OFF
         else:
             await update.message.reply_text(
@@ -281,9 +279,9 @@ class Bot:
     async def end_reg(self, update, context):
         markup2 = ReplyKeyboardMarkup([['Come back to menu']], one_time_keyboard=True)
         markup1 = ReplyKeyboardMarkup([['Try again'], ['Back']], one_time_keyboard=True)
-        hashed_password = hashlib.md5(self.password.encode('utf-8')).hexdigest()
+        hashed_password = hashlib.md5(self.password.encode()).hexdigest()
         self.cur.execute(
-            f"INSERT INTO users(email, nickname, name, surname, age, hashed_password, is_authorized_tel) VALUES('{self.email}', '{self.username}', '{self.name}', '{self.surname}', {self.age}, '{hashed_password}', '1')")
+            f"INSERT INTO users(email, nickname, name, surname, age, hashed_password) VALUES('{self.email}', '{self.username}', '{self.name}', '{self.surname}', {self.age}, '{hashed_password}')")
         if self.cur.execute(f"SELECT id FROM users WHERE email = '{self.email}'").fetchone() is None:
             await update.message.reply_text(
                 text="Ошибка создания аккаунта",
@@ -295,8 +293,8 @@ class Bot:
                 text="Аккаунт успешно создан",
                 reply_markup=markup2
             )
+            print(self.cur.execute(f"SELECT id FROM users WHERE email = '{self.email}'").fetchone())
             self.keyboard_pos = 0
-            self.con.close()
             return TURNED_OFF
 
     async def choose_genre(self, update, context):
@@ -422,3 +420,4 @@ class Bot:
 if __name__ == '__main__':
     us1 = Bot()
     us1.main()
+    us1.con.close()
