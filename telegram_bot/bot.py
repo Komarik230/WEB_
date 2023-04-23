@@ -74,7 +74,6 @@ class Bot:
             text="Всего доброго!",
             reply_markup=markup
         )
-        self.con.close()
         return TURNED_OFF
 
     async def back(self, update, context):
@@ -171,7 +170,6 @@ class Bot:
                             WHERE id = ?""", self.user_id)
         print(self.cur.execute("""SELECT is_authorized_tel FROM users WHERE id = ?""", self.user_id).fetchone()[0])
         await update.message.reply_text(text='Вы успешно вышли из аккаунта', reply_markup=markup)
-        self.con.close()
         return TURNED_OFF
 
     async def enter_email(self, update, context):

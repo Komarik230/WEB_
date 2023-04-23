@@ -1,7 +1,7 @@
 import os
 import openai
 
-openai.api_key = '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'
+openai.api_key = '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'
 
 
 def gen_st(request):
